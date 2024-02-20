@@ -5,8 +5,10 @@
 #ifndef SOCIALNETWORKPOLARIZATION_FIRSTORDERDISCRETEBELIEF_H
 #define SOCIALNETWORKPOLARIZATION_FIRSTORDERDISCRETEBELIEF_H
 
+#include "Belief.h"
 
-class FirstOrderDiscreteBelief {
+
+class FirstOrderDiscreteBelief : public Belief{
 private:
     double beliefValue;
 public:

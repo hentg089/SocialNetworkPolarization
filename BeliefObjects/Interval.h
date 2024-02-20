@@ -5,8 +5,9 @@
 #ifndef SOCIALNETWORKPOLARIZATION_INTERVAL_H
 #define SOCIALNETWORKPOLARIZATION_INTERVAL_H
 
+#include "Belief.h"
 
-class Interval {
+class Interval : public Belief {
 private:
     double l;
     double r;
