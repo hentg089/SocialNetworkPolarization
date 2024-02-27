@@ -18,8 +18,8 @@ public:
     double getR();
     double getL();
 
-    double setR(double r);
-    double setL(double l);
+    void setR(double r);
+    void setL(double l);
 
     double center();
 

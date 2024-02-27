@@ -22,11 +22,11 @@ double Interval::getR() {
     return r;
 }
 
-double Interval::setL(double l) {
+void Interval::setL(double l) {
     this->l = l;
 }
 
-double Interval::setR(double r) {
+void Interval::setR(double r) {
     this->r = r;
 }
 
