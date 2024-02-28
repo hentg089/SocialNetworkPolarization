@@ -6,6 +6,8 @@
 #define SOCIALNETWORKPOLARIZATION_MODEL_H
 
 #include "BeliefObjects/Belief.h"
+#include "BeliefObjects/Interval.h"
+#include "BeliefObjects/FirstOrderDiscreteBelief.h"
 
 #include <unordered_map>
 #include <vector>
@@ -25,7 +27,10 @@ private:
     int agentCount;
 
     //given a belief order it will calculate all the new beliefs at that level
-    void calculateNewBelief(std::string&);
+    void calculateNewBeliefFirstOrder(std::string&, int&);
+    double calculateNewBelief1OrderRelTo(std::string, int agent);
+
+    void calculateNewBeliefNOrder(std::string&, int&);
 
     double getPolarizationValue();
 public:

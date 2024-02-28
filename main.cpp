@@ -3,10 +3,10 @@
 
 int main() {
     std::cout << "Hello, World!" << std::endl;
-    Model p(3,2,4);
+    Model p(10,2,4);
     std::string temp = "";
     int z = 2;
-    p.calculateOrderBeliefs(z,1,temp);
+    p.calculateOrderBeliefs(z,3,temp);
 
     return 0;
 }

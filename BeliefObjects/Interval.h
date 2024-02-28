@@ -7,6 +7,7 @@
 
 #include "Belief.h"
 
+
 class Interval : public Belief {
 private:
     double l;

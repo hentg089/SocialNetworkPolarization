@@ -15,6 +15,8 @@ Model::Model(int agentCount, int x, int n) {
     this->n = n;
 }
 
+
+
 Model::Model(int agentCount, int x, int n, std::unordered_map<std::string, std::unique_ptr<Belief>>&& firstOrders,
              std::unordered_map<std::string, double>&& influences){
     this->agentCount = agentCount;
@@ -23,6 +25,7 @@ Model::Model(int agentCount, int x, int n, std::unordered_map<std::string, std::
     this->beliefs_t = std::move(firstOrders);
     this->influences = std::move(influences);
 }
+
 
 std::vector<double> Model::runSimulation(int tSteps) {
     std::vector<double> polarizationValues;
@@ -59,13 +62,37 @@ void Model::calculateOrderBeliefs(int& beliefOrder, int xIter, std::string& beli
             beliefString = beliefString.substr(0,truncatePoint);
         }
     }else{
-        calculateNewBelief(beliefString);
+        if(beliefOrder == 1){
+            calculateNewBeliefFirstOrder(beliefString, beliefOrder);
+        }else{
+            calculateNewBeliefNOrder(beliefString, beliefOrder);
+        }
     }
 }
 
-void Model::calculateNewBelief(std::string& beliefString) {
-    std::cout << beliefString <<  std::endl;
+void Model::calculateNewBeliefNOrder(std::string& beliefString, int& beliefOrder) {
+    if(beliefs_t.find(beliefString) == beliefs_t.end()){
+        beliefs_t[beliefString] = std::make_unique<Interval>();
+    }
+
+
 }
+
+void Model::calculateNewBeliefFirstOrder(std::string &beliefString, int &beliefOrder) {
+    //because the cumulative is just and average we'll calculate individuals input from each agent then average
+    double newBeliefCumulative = 0;
+    for(int agent = 1; agent <= agentCount; ++agent){
+        newBeliefCumulative += calculateNewBelief1OrderRelTo(beliefString, agent);
+    }
+
+    //basically just take the average after finding individual contributions - we can come back and optimize this
+    beliefs_t_plus_1[beliefString] = std::make_unique<FirstOrderDiscreteBelief>(newBeliefCumulative / agentCount);
+}
+
+double Model::calculateNewBelief1OrderRelTo(std::string, int agent){
+
+}
+
 
 double Model::getPolarizationValue() {
     return 0;

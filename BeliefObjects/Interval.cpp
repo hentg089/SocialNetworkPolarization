@@ -6,7 +6,7 @@
 
 Interval::Interval() {
     l = 0;
-    r = 0;
+    r = 1;
 }
 
 Interval::Interval(double l, double r)
