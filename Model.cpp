@@ -17,13 +17,16 @@ Model::Model(int agentCount, int x, int n) {
 
 
 
-Model::Model(int agentCount, int x, int n, std::unordered_map<std::string, std::unique_ptr<Belief>>&& firstOrders,
-             std::unordered_map<std::string, double>&& influences){
+Model::Model(int agentCount, int x, int n, std::unordered_map<std::string, FirstOrderDiscreteBelief>&& firstOrders,
+             std::unordered_map<std::string, double>&& influences,
+             std::vector<double>&& weightsFirstOrder, std::vector<double>&& weightsNthOrder){
     this->agentCount = agentCount;
     this->x = x;
     this->n = n;
-    this->beliefs_t = std::move(firstOrders);
+    this->beliefs_t_first_order = std::move(firstOrders);
     this->influences = std::move(influences);
+    this->firstOrderWeights = std::move(weightsFirstOrder);
+    this->nOrderWeights = std::move(weightsNthOrder);
 }
 
 
@@ -72,7 +75,7 @@ void Model::calculateOrderBeliefs(int& beliefOrder, int xIter, std::string& beli
 
 void Model::calculateNewBeliefNOrder(std::string& beliefString, int& beliefOrder) {
     if(beliefs_t.find(beliefString) == beliefs_t.end()){
-        beliefs_t[beliefString] = std::make_unique<Interval>();
+        beliefs_t[beliefString] = Interval();
     }
 
 
@@ -86,10 +89,11 @@ void Model::calculateNewBeliefFirstOrder(std::string &beliefString, int &beliefO
     }
 
     //basically just take the average after finding individual contributions - we can come back and optimize this
-    beliefs_t_plus_1[beliefString] = std::make_unique<FirstOrderDiscreteBelief>(newBeliefCumulative / agentCount);
+    beliefs_t_plus_1_first_order[beliefString] = FirstOrderDiscreteBelief(newBeliefCumulative / agentCount);
 }
 
-double Model::calculateNewBelief1OrderRelTo(std::string, int agent){
+double Model::calculateNewBelief1OrderRelTo(std::string& beliefString, int agent){
+    return beliefs_t_first_order[beliefString].getBeliefValue();
 
 }
 

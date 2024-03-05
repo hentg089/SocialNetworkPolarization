@@ -17,34 +17,43 @@
 
 class Model{
 private:
-    //we will have p agents, 1-p. Higher order belief can be thought of as a chain ie:
-    //1 believes 2 belives 1 believs 3 believes etc and can bre represented with an int: 1213...
-    std::unordered_map<std::string, std::unique_ptr<Belief>> beliefs_t;
-    std::unordered_map<std::string, std::unique_ptr<Belief>> beliefs_t_plus_1;
+    //WE HAVE A HASHMAP FOR CURRENT FIRST ORDER, T + 1 FIRTST ORDER, CURRENT N ORDER AND T+1 N ORDER
+    //WE SEPERATE IN ORDER TO AVOID POLYMORPHISM
+    std::unordered_map<std::string, FirstOrderDiscreteBelief> beliefs_t_first_order;
+    std::unordered_map<std::string, FirstOrderDiscreteBelief> beliefs_t_plus_1_first_order;
+    std::unordered_map<std::string, Interval> beliefs_t;
+    std::unordered_map<std::string, Interval> beliefs_t_plus_1;
+private:
     std::unordered_map<std::string, double> influences;
+
     int n;
     int x;
     int agentCount;
 
+    std::vector<double> firstOrderWeights;
+    std::vector<double> nOrderWeights;
+private:
     //given a belief order it will calculate all the new beliefs at that level
+    void calculateOrderBeliefs(int& beliefOrder, int xIter, std::string& beliefString);
+
     void calculateNewBeliefFirstOrder(std::string&, int&);
-    double calculateNewBelief1OrderRelTo(std::string, int agent);
 
     void calculateNewBeliefNOrder(std::string&, int&);
 
     double getPolarizationValue();
+
 public:
-    void calculateOrderBeliefs(int& beliefOrder, int xIter, std::string& belief);
 
     Model();
     Model(int agentCount, int x, int n);
 
-    Model(int agentCount, int x, int n, std::unordered_map<std::string, std::unique_ptr<Belief>>&& firstOrders,
-          std::unordered_map<std::string, double>&& influences);
+    Model(int agentCount, int x, int n, std::unordered_map<std::string, FirstOrderDiscreteBelief>&& firstOrders,
+          std::unordered_map<std::string, double>&& influences,
+          std::vector<double>&& weightsFirstOrder, std::vector<double>&& weightsNthOrder);
 
     std::vector<double> runSimulation(int tSteps);
 
-
+    double calculateNewBelief1OrderRelTo(std::string&, int agent);
 
 };
 
