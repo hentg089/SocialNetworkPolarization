@@ -18,7 +18,9 @@ int main() {
     Model p(agentCount, x, n, std::move(firstOrderBeliefs), std::move(influence),
             std::move(weights_first), std::move(weights_higher));
     std::string h = "B1";
-    std::cout << p.calculateNewBelief1OrderRelTo(h,1);
+    p.calculateNewBelief1OrderRelTo(h,2);
+
+
 
 
     return 0;

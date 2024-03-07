@@ -74,9 +74,7 @@ void Model::calculateOrderBeliefs(int& beliefOrder, int xIter, std::string& beli
 }
 
 void Model::calculateNewBeliefNOrder(std::string& beliefString, int& beliefOrder) {
-    if(beliefs_t.find(beliefString) == beliefs_t.end()){
-        beliefs_t[beliefString] = Interval();
-    }
+
 
 
 }
@@ -93,8 +91,93 @@ void Model::calculateNewBeliefFirstOrder(std::string &beliefString, int &beliefO
 }
 
 double Model::calculateNewBelief1OrderRelTo(std::string& beliefString, int agent){
-    return beliefs_t_first_order[beliefString].getBeliefValue();
+    double cur = beliefs_t_first_order[beliefString].getBeliefValue();
+    double res = cur;
 
+
+    //dont actually need this shit because it's first order beoeif
+//    std::vector<std::string>agentsForInfluence;
+//    std::stringstream ss(beliefString);
+//    std::string num;
+//    std::getline(ss, num, 'B');
+//    while(std::getline(ss, num, 'B')){
+//        agentsForInfluence.push_back(num);
+//    }
+    std::stringstream ss(beliefString);
+    std::string updatingNum;
+    std::getline(ss, updatingNum, 'B');
+    std::getline(ss, updatingNum, 'B');
+
+    //now we need to factor in B(agent)
+    res += firstOrderWeights[0] *
+            influences[std::to_string(agent) + "," + updatingNum] *
+            (beliefs_t_first_order["B" + std::to_string(agent)].getBeliefValue() - cur);
+
+    //for BAGENTBKBk2Bk3 etc
+    if(n > 1){
+        for(int order = 2; order <= x && order <= n; ++order){
+            int index = order - 1;
+            //weight * interval len avg * change factor avg
+            res += firstOrderWeights[index] *
+                    (1 - pow((1.0/agentCount), index) * stringGenJFirst("B" + std::to_string(agent), order + 0, std::move(updatingNum), order + 0)) *
+                    pow((1.0/agentCount), index) *
+                    avgDifferenceGenFirst("B" + std::to_string(agent), order + 0, std::move(updatingNum), order + 0);
+        }
+    }
+
+    //for B0Bk1Bk2...Bagent
+    if(n > 1){
+
+    }
+
+
+    return res;
+
+}
+
+double Model::stringGenJFirst(std::string&& s, int&& order, std::string&& updatingNum, int&& originalOrder){
+    //s gets passed with BJ so if order = 2 then we have to only add one extra layer so order > 1
+    if(order > 1){
+        double ret = 0;
+        for(int i = 1; i <= agentCount; ++i){
+            s += "B" + std::to_string(i);
+            order -= 1;
+            ret += stringGenJFirst(std::move(s), std::move(order),
+                               std::move(updatingNum), std::move(originalOrder));
+            order += 1;
+            size_t truncatePoint = s.find_last_of('B');
+            s = s.substr(0,truncatePoint);
+        }
+
+        return ret;
+    }else{
+        return beliefs_t[s].length();
+    }
+}
+
+double Model::avgDifferenceGenFirst(std::string &&s, int &&order, std::string &&updatingNum, int &&originalOrder) {
+    if(order > 1){
+        double ret = 0;
+        for(int i = 1; i <= agentCount; ++i){
+            s += "B" + std::to_string(i);
+            order -= 1;
+            ret += stringGenJFirst(std::move(s), std::move(order),
+                                   std::move(updatingNum), std::move(originalOrder));
+            order += 1;
+            size_t truncatePoint = s.find_last_of('B');
+            s = s.substr(0,truncatePoint);
+        }
+    }else{
+        double influence = 1;
+        std::stringstream ss(s);
+        std::string num;
+        std::getline(ss, num, 'B');
+        while(std::getline(ss, num, 'B')){
+            influence *= influences[updatingNum + "," + num];
+        }
+
+        return influence * (beliefs_t[s].center() - beliefs_t_first_order["B" + updatingNum].getBeliefValue())
+    }
 }
 
 

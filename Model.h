@@ -38,11 +38,17 @@ private:
 
     void calculateNewBeliefFirstOrder(std::string&, int&);
 
+
     void calculateNewBeliefNOrder(std::string&, int&);
 
     double getPolarizationValue();
+private:
+    double stringGenJFirst(std::string&&, int&&, std::string&&, int&&);
+    double avgDifferenceGenFirst(std::string&&, int&&, std::string&&, int&&);
 
 public:
+    double calculateNewBelief1OrderRelTo(std::string&, int agent);
+
 
     Model();
     Model(int agentCount, int x, int n);
@@ -53,7 +59,6 @@ public:
 
     std::vector<double> runSimulation(int tSteps);
 
-    double calculateNewBelief1OrderRelTo(std::string&, int agent);
 
 };
 
