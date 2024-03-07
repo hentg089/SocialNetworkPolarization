@@ -18,7 +18,7 @@ int main() {
     Model p(agentCount, x, n, std::move(firstOrderBeliefs), std::move(influence),
             std::move(weights_first), std::move(weights_higher));
 
-    p.stringGenJFirst("BV",4,"1",4);
+    p.avgDifferenceGenSecond("BV",3,"1",3, "5");
 
 
 

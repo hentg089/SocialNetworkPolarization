@@ -136,6 +136,7 @@ double Model::calculateNewBelief1OrderRelTo(std::string& beliefString, int agent
                 res += firstOrderWeights[n + order - 2] *
                         (1 - pow(1.0/agentCount, order - 2) * stringGenJSecond("B" + updatingNum,order + 0,std::to_string(agent),order + 0) *
                                      pow(1.0/agentCount, order - 2) *
+                                     avgDifferenceGenSecond("B" + updatingNum, order + 0, std::move(updatingNum), order + 0, std::to_string(agent)));
 
 
             }
@@ -167,7 +168,11 @@ double Model::stringGenJSecond(std::string &&s, int &&order, std::string &&updat
         return ret;
     }else{
         s += "B" + updateTo;
-        return beliefs_t[s].length();
+        double ret = beliefs_t[s].length();
+        //have to rmeove teh last BK
+        size_t truncatePoint = s.find_last_of('B');
+        s = s.substr(0,truncatePoint);
+        return ret;
     }
 }
 
@@ -191,14 +196,34 @@ double Model::stringGenJFirst(std::string&& s, int&& order, std::string&& updati
     }
 }
 
-double Model::avgDifferenceGenSecond(std::string&& s, int&& order, std::string&& updatingNum, int&& originalOrder){
+double Model::avgDifferenceGenSecond(std::string&& s, int&& order, std::string&& updatingNum, int&& originalOrder, std::string&& relto){
     if(order > 2){
         double ret = 0;
         for(int i = 1; i <= agentCount; ++i){
             s += "B" + std::to_string(i);
             order -= 1;
-            ret +=
+            ret += avgDifferenceGenSecond(std::move(s), std::move(order),
+                                          std::move(updatingNum), std::move(originalOrder), std::move(relto));
+            order += 1;
+            size_t truncatePoint = s.find_last_of('B');
+            s = s.substr(0,truncatePoint);
         }
+    }else{
+        double influence = 1;
+        s += "B" + relto;
+        std::stringstream ss(s);
+        std::string num;
+        std::getline(ss, num, 'B');
+        std::getline(ss, num, 'B');
+        while(std::getline(ss, num, 'B')){
+            influence *= influences[relto + "," + num];
+        }
+        double ret = influence * (beliefs_t[s].center() - beliefs_t_first_order["B" + updatingNum].getBeliefValue());
+        size_t truncatePoint = s.find_last_of('B');
+        s = s.substr(0,truncatePoint);
+
+        return ret;
+
     }
 }
 
