@@ -46,6 +46,9 @@ private:
     double stringGenJFirst(std::string&&, int&&, std::string&&, int&&);
     double avgDifferenceGenFirst(std::string&&, int&&, std::string&&, int&&);
 
+    double stringGenJSecond(std::string&&, int&&, std::string&&, int&&);
+    double avgDifferenceGenSecond(std::string&&, int&&, std::string&&, int&&);
+
 public:
     double calculateNewBelief1OrderRelTo(std::string&, int agent);
 

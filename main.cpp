@@ -17,8 +17,8 @@ int main() {
 
     Model p(agentCount, x, n, std::move(firstOrderBeliefs), std::move(influence),
             std::move(weights_first), std::move(weights_higher));
-    std::string h = "B1";
-    p.calculateNewBelief1OrderRelTo(h,2);
+
+    p.stringGenJFirst("BV",4,"1",4);
 
 
 

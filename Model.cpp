@@ -127,12 +127,48 @@ double Model::calculateNewBelief1OrderRelTo(std::string& beliefString, int agent
 
     //for B0Bk1Bk2...Bagent
     if(n > 1){
+        res += firstOrderWeights[n] *
+                influences[std::to_string(agent) + "," + updatingNum]*
+                (1 - beliefs_t["B" + updatingNum + "B" + std::to_string(agent)].length())*
+                (beliefs_t["B" + updatingNum + "B" + std::to_string(agent)].center() - beliefs_t_first_order["B" + updatingNum].getBeliefValue());
+        if(n > 2){
+            for(int order = 3; order <= x && order <= n; ++order){
+                res += firstOrderWeights[n + order - 2] *
+                        (1 - pow(1.0/agentCount, order - 2) * stringGenJSecond("B" + updatingNum,order + 0,std::to_string(agent),order + 0) *
+                                     pow(1.0/agentCount, order - 2) *
+
+
+            }
+        }
 
     }
 
 
     return res;
 
+}
+
+
+
+
+//for the second have of the formula
+double Model::stringGenJSecond(std::string &&s, int &&order, std::string &&updateTo, int &&originalOrder) {
+    if(order > 2){
+        double ret = 0;
+        for (int i = 1; i <= agentCount; ++i){
+            s += "B" + std::to_string(i);
+            order -= 1;
+            ret += stringGenJSecond(std::move(s), std::move(order),
+                                    std::move(updateTo), std::move(originalOrder));
+            order += 1;
+            size_t truncatePoint = s.find_last_of('B');
+            s = s.substr(0,truncatePoint);
+        }
+        return ret;
+    }else{
+        s += "B" + updateTo;
+        return beliefs_t[s].length();
+    }
 }
 
 double Model::stringGenJFirst(std::string&& s, int&& order, std::string&& updatingNum, int&& originalOrder){
@@ -155,13 +191,24 @@ double Model::stringGenJFirst(std::string&& s, int&& order, std::string&& updati
     }
 }
 
+double Model::avgDifferenceGenSecond(std::string&& s, int&& order, std::string&& updatingNum, int&& originalOrder){
+    if(order > 2){
+        double ret = 0;
+        for(int i = 1; i <= agentCount; ++i){
+            s += "B" + std::to_string(i);
+            order -= 1;
+            ret +=
+        }
+    }
+}
+
 double Model::avgDifferenceGenFirst(std::string &&s, int &&order, std::string &&updatingNum, int &&originalOrder) {
     if(order > 1){
         double ret = 0;
         for(int i = 1; i <= agentCount; ++i){
             s += "B" + std::to_string(i);
             order -= 1;
-            ret += stringGenJFirst(std::move(s), std::move(order),
+            ret += avgDifferenceGenFirst(std::move(s), std::move(order),
                                    std::move(updatingNum), std::move(originalOrder));
             order += 1;
             size_t truncatePoint = s.find_last_of('B');
@@ -176,7 +223,7 @@ double Model::avgDifferenceGenFirst(std::string &&s, int &&order, std::string &&
             influence *= influences[updatingNum + "," + num];
         }
 
-        return influence * (beliefs_t[s].center() - beliefs_t_first_order["B" + updatingNum].getBeliefValue())
+        return influence * (beliefs_t[s].center() - beliefs_t_first_order["B" + updatingNum].getBeliefValue());
     }
 }
 
