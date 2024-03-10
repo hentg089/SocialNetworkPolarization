@@ -75,8 +75,6 @@ void Model::calculateOrderBeliefs(int& beliefOrder, int xIter, std::string& beli
 
 void Model::calculateNewBeliefNOrder(std::string& beliefString, int& beliefOrder) {
 
-
-
 }
 
 void Model::calculateNewBeliefFirstOrder(std::string &beliefString, int &beliefOrder) {
